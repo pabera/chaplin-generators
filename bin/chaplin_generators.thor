@@ -49,7 +49,7 @@ class CG < Thor
     end
 
     def generate_chaplin_model
-      template('chaplin_model.coffee.erb', "#{output_path}coffee/model/#{underscore_name}.coffee")
+      template('chaplin_model.coffee.erb', "#{output_path}coffee/models/#{underscore_name}.coffee")
     end
 
     def generate_chaplin_view
