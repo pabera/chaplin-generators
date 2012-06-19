@@ -16,31 +16,31 @@ $ mv chaplin-boilerplate src
 $ git clone https://github.com/pabera/chaplin-generators.git
 ```
 
-## Scaffold
+### Scaffold
 A scaffold creates a Controller, Model, View (*.coffee) and a template (*.hbs - Handlebars-Template)
 
 `thor chaplin_generator:scaffold NAME`
 
 
-## Controller
+### Controllers
 Creates a single controller (*.coffee)
 
 `thor chaplin_generator:controller NAME`
 
 
-## Model
+### Models
 Creates a single model (*.coffee)
 
 `thor chaplin_generator:model NAME`
 
 
-## View
+### Views
 Creates a single view (*.coffee)
 
 `thor chaplin_generator:view NAME`
 
 
-## Template
+### Templates
 Creates a single Handlebars Template (*.js)
 
 `thor chaplin_generator:hbs_template NAME`
