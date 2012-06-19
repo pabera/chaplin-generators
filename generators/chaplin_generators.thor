@@ -37,15 +37,40 @@ class ChaplinGenerator < Thor
       #template('chaplin_controller_spec.coffee.erb', "../../src/test/controllers/#{underscore_name}_spec.coffee")
     end
 
+    def generate_chaplin_view
+      template('chaplin_view.coffee.erb', "../../src/coffee/views/#{underscore_name}/index_view.coffee")
+      #template('chaplin_controller_spec.coffee.erb', "../../src/test/views/#{underscore_name}/index_view_spec.coffee")
+    end
+
+    def generate_chaplin_template
+      template('chaplin_template_index.hbs.erb', "../../src/js/templates/#{underscore_name}/index.hbs")
+    end
   end
 
 
-   desc 'controller Name', "Create a controller"
-   def controller(name)
-     @name = name
-     generate_chaplin_controller
-   end
+  desc 'controller Name', "Create a controller"
+  def controller(name)
+    @name = name
+    generate_chaplin_controller
+  end
 
+  desc 'view Name', "Create a View"
+  def view(name)
+    @name = name
+    generate_chaplin_view
+  end
+
+  desc 'hbs_template Name', "Create a Template"
+  def hbs_template(name)
+    @name = name
+    generate_chaplin_template
+  end
+
+  desc 'scaffold Name', "Generate Scaffold"
+  def scaffold(name)
+    @name = name
+    %w{controller view template}.each { |which| send("generate_chaplin_#{which}") }
+  end
 
   private
   def pluralize(string)

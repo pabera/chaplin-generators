@@ -1,0 +1,16 @@
+define [
+  'views/base/view'
+  'text!templates/<%= plural_underscore_name %>/index.hbs'
+  ], (View, template) ->
+   'use strict'
+
+   class <%= plural_camelize_name %>IndexView extends View
+
+    template: template
+    template = null
+    id: '<%= plural_underscore_name %>'
+    container: ''
+    autoRender: true
+
+    initialize: ->
+     super
