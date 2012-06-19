@@ -14,7 +14,7 @@ $ git clone https://github.com/chaplinjs/chaplin-boilerplate.git
 $ mv chaplin-boilerplate src
 
 $ git clone https://github.com/pabera/chaplin-generators.git
-$ cd bin
+$ cd chaplin-generators/bin
 ```
 
 ### Scaffold

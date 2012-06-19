@@ -19,6 +19,10 @@ class CG < Thor
       singularize(Thor::Util.snake_case(@name))      
     end
 
+    def minus_name
+      underscore_name.gsub("_", "-")
+    end
+
     def plural_underscore_name
       pluralize(underscore_name)
     end
@@ -55,6 +59,10 @@ class CG < Thor
     def generate_chaplin_template
       template('chaplin_template_index.hbs.erb', "#{output_path}js/templates/#{underscore_name}/index.hbs")
     end
+
+    def create_router_entry
+      insert_into_file("#{output_path}/coffee/routes.coffee", "\n    match '#{minus_name}/index',   '#{camelize_name}#index'", :after => "  (match) ->")
+    end
   end
 
 
@@ -86,12 +94,14 @@ class CG < Thor
   def scaffold(name)
     @name = name
     %w{controller model view template}.each { |which| send("generate_chaplin_#{which}") }
+    create_router_entry
   end
 
   desc 'scaffold_controller Name', "Generate Chaplin Scaffold Controller - Controller, View, Template"
   def scaffold_controller(name)
     @name = name
     %w{controller view template}.each { |which| send("generate_chaplin_#{which}") }
+    create_router_entry
   end
 
   private
