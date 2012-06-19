@@ -17,6 +17,11 @@ $ git clone https://github.com/pabera/chaplin-generators.git
 $ cd chaplin-generators/bin
 ```
 
+### Application
+Clones a the Chaplin-Boilerplate from Github and sets up folder structure that works with chaplin-generators
+
+`thor cg:app`
+
 ### Scaffold
 A scaffold creates a Controller, Model, View (.coffee) and a template (.hbs - Handlebars-Template)
 
@@ -24,10 +29,13 @@ A scaffold creates a Controller, Model, View (.coffee) and a template (.hbs - Ha
 
 
 ### Controllers
-Creates a single controller (*.coffee)
+Creates a new single controller (*.coffee)
 
 `thor cg:controller NAME`
 
+Create a new controller action
+
+`thor cg:controller NAME ACTION`
 
 ### Models
 Creates a single model (*.coffee)
@@ -42,7 +50,7 @@ Creates a single view (*.coffee)
 
 
 ### Templates
-Creates a single Handlebars Template (*.js)
+Creates a single Handlebars Template (*.hbs)
 
 `thor cg:hbs_template NAME`
 
@@ -52,7 +60,8 @@ Creates a single Handlebars Template (*.js)
 $ thor list
 cg
 --
-thor cg:controller Name           # Create a Chaplin Controller
+thor cg:app                       # basic app creation, clones Chaplin Boilerplate from Github
+thor cg:controller NAME ACTION    # Create a Chaplin Controller
 thor cg:hbs_template Name         # Create a Chaplin Template
 thor cg:model Name                # Create a Chaplin Model
 thor cg:scaffold Name             # Generate Chaplin Scaffold - Controller, Model, View, Template
