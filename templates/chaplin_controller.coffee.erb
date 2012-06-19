@@ -1,0 +1,16 @@
+define [
+  'chaplin'
+  'views/<% plural_underscore_name %>/index_view'
+], (Chaplin, <% plural_camelize_name %>IndexView) ->
+  'use strict'
+
+  mediator = Chaplin.mediator
+
+  class <% plural_camelize_name %>Controller extends Chaplin.Controller
+
+    title: '<% plural_camelize_name %>'
+    historyURL: (params) ->
+      '<% plural_object_name %>'
+
+    index: (params) ->
+      @view = new <% plural_camelize_name %>IndexView()
