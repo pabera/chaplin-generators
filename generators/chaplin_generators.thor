@@ -21,7 +21,7 @@ class ChaplinGenerator < Thor
     end
 
     def plural_camelize_name
-      Thor::Util.snake_case(plural_underscore_name)
+      Thor::Util.camel_case(plural_underscore_name)
     end
 
     def object_name
@@ -34,7 +34,7 @@ class ChaplinGenerator < Thor
 
     def generate_chaplin_controller
       template('chaplin_controller.coffee.erb', "../../src/coffee/controllers/#{underscore_name}.coffee")
-      template('chaplin_controller_spec.coffee.erb', "../../src/test/controllers/#{underscore_name}_spec.coffee")
+      #template('chaplin_controller_spec.coffee.erb', "../../src/test/controllers/#{underscore_name}_spec.coffee")
     end
 
   end
