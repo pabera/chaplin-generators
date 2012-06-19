@@ -2,10 +2,8 @@ require 'rubygems'
 require 'thor'
 require 'thor/group'
 
-class ChaplinGenerator < Thor
+class CG < Thor
   include Thor::Actions
-
-
 
   def self.source_root
     File.expand_path('../../templates', __FILE__)    
@@ -23,6 +21,10 @@ class ChaplinGenerator < Thor
 
     def plural_underscore_name
       pluralize(underscore_name)
+    end
+
+    def camelize_name
+      Thor::Util.camel_case(underscore_name)
     end
 
     def plural_camelize_name
@@ -56,32 +58,38 @@ class ChaplinGenerator < Thor
   end
 
 
-  desc 'controller Name', "Create a controller"
+  desc 'controller Name', "Create a Chaplin Controller"
   def controller(name)
     @name = name
     generate_chaplin_controller
   end
 
-  desc 'view Name', "Create a View"
+  desc 'model Name', "Create a Chaplin Model"
+  def model(name)
+    @name = name
+    generate_chaplin_model
+  end
+
+  desc 'view Name', "Create a Chaplin View"
   def view(name)
     @name = name
     generate_chaplin_view
   end
 
-  desc 'hbs_template Name', "Create a Template"
+  desc 'hbs_template Name', "Create a Chaplin Template"
   def hbs_template(name)
     @name = name
     generate_chaplin_template
   end
 
-  desc 'scaffold Name', "Generate Scaffold - Controller, Model, View, Template"
+  desc 'scaffold Name', "Generate Chaplin Scaffold - Controller, Model, View, Template"
   def scaffold(name)
     @name = name
     %w{controller model view template}.each { |which| send("generate_chaplin_#{which}") }
   end
 
-  desc 'scaffold_controller Name', "Generate Scaffold Controller - Controller, View, Template"
-  def scaffold(name)
+  desc 'scaffold_controller Name', "Generate Chaplin Scaffold Controller - Controller, View, Template"
+  def scaffold_controller(name)
     @name = name
     %w{controller view template}.each { |which| send("generate_chaplin_#{which}") }
   end
