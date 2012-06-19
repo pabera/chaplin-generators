@@ -45,7 +45,7 @@ class CG < Thor
 
     def generate_chaplin_app
       run('git clone https://github.com/chaplinjs/chaplin-boilerplate.git')
-      run('mv chaplin-boilerplate ../src')
+      run('mv chaplin-boilerplate #{output_path}')
     end
 
     def generate_chaplin_controller
