@@ -43,8 +43,21 @@ class CG < Thor
       pluralize(object_name)
     end
 
+    def generate_chaplin_app
+      run('git clone https://github.com/chaplinjs/chaplin-boilerplate.git')
+      run('mv chaplin-boilerplate ../src')
+    end
+
     def generate_chaplin_controller
-      template('chaplin_controller.coffee.erb', "#{output_path}coffee/controllers/#{underscore_name}.coffee")
+      destination = "#{output_path}coffee/controllers/#{underscore_name}.coffee"
+      if File.exists?(destination) && @action_name != 'index'
+        File.open(destination, 'a') do |file|
+          file.puts "\n\n    #{@action_name}: (params) ->"
+        end
+      else
+        template('chaplin_controller.coffee.erb', "#{output_path}coffee/controllers/#{underscore_name}.coffee")
+      end
+
       #template('chaplin_controller_spec.coffee.erb', "#{self.output_path}test/controllers/#{underscore_name}_spec.coffee")
     end
 
@@ -65,10 +78,15 @@ class CG < Thor
     end
   end
 
+  desc 'app', 'basic app creation, clones Chaplin Boilerplate from Github'
+  def app
+    generate_chaplin_app
+  end
 
-  desc 'controller Name', "Create a Chaplin Controller"
-  def controller(name)
+  desc 'controller NAME ACTION', "Create a Chaplin Controller"
+  def controller(name, action_name = 'index')
     @name = name
+    @action_name = action_name
     generate_chaplin_controller
   end
 

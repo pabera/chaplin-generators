@@ -18,7 +18,7 @@ $ cd chaplin-generators/bin
 ```
 
 ### Scaffold
-A scaffold creates a Controller, Model, View (*.coffee) and a template (*.hbs - Handlebars-Template)
+A scaffold creates a Controller, Model, View (.coffee) and a template (.hbs - Handlebars-Template)
 
 `thor cg:scaffold NAME`
 
