@@ -49,10 +49,10 @@ class CG < Thor
     end
 
     def generate_chaplin_controller
-      path = "#{output_path}coffee/controllers/#{underscore_name}.coffee"
+      path = "#{output_path}coffee/controllers/#{underscore_name}_controller.coffee"
 
       if !File.exists?(path)
-        template('chaplin_controller.coffee.erb', "#{output_path}coffee/controllers/#{underscore_name}.coffee")
+        template('chaplin_controller.coffee.erb', path)
       end
 
       @action_name == 'index' if !@action_name
