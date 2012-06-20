@@ -1,7 +1,6 @@
 define [
   'chaplin'
-  'views/<%= underscore_name %>/index_view'
-], (Chaplin, <%= camelize_name %>IndexView) ->
+], (Chaplin) ->
   'use strict'
 
   mediator = Chaplin.mediator
@@ -11,6 +10,3 @@ define [
     title: '<%= camelize_name %>'
     historyURL: (params) ->
       '<%= plural_object_name %>'
-
-    index: (params) ->
-      @view = new <%= camelize_name %>IndexView()

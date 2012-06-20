@@ -44,18 +44,20 @@ class CG < Thor
     end
 
     def generate_chaplin_app
-      run('git clone https://github.com/chaplinjs/chaplin-boilerplate.git')
+      run("git clone https://github.com/chaplinjs/chaplin-boilerplate.git")
       run("mv chaplin-boilerplate #{output_path}")
     end
 
     def generate_chaplin_controller
-      destination = "#{output_path}coffee/controllers/#{underscore_name}.coffee"
-      if File.exists?(destination) && @action_name != 'index'
-        append_to_file(destination, "\n\n    #{@action_name}: (params) ->")
-      else
+      path = "#{output_path}coffee/controllers/#{underscore_name}.coffee"
+
+      if !File.exists?(path)
         template('chaplin_controller.coffee.erb', "#{output_path}coffee/controllers/#{underscore_name}.coffee")
       end
 
+      @action_name == 'index' if !@action_name
+      append_to_file(path, "\n\n    #{@action_name}: (params) ->\n      # @view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
+      
       #template('chaplin_controller_spec.coffee.erb', "#{self.output_path}test/controllers/#{underscore_name}_spec.coffee")
     end
 
@@ -64,17 +66,32 @@ class CG < Thor
     end
 
     def generate_chaplin_view
-      template('chaplin_view.coffee.erb', "#{output_path}coffee/views/#{underscore_name}/index_view.coffee")
+      template('chaplin_view.coffee.erb', "#{output_path}coffee/views/#{underscore_name}/#{@action_name}_view.coffee")
     end
 
     def generate_chaplin_template
-      template('chaplin_template_index.hbs.erb', "#{output_path}js/templates/#{underscore_name}/index.hbs")
+      template('chaplin_template_index.hbs.erb', "#{output_path}js/templates/#{underscore_name}/#{@action_name}.hbs")
+    end
+
+    def add_view_definition_to_controller
+      path = "#{output_path}coffee/controllers/#{underscore_name}.coffee"
+      @action_name == 'index' if !@action_name
+
+      content = File.binread(path)
+      content.gsub!(/$\n^\],.*\(.*\).*->$/) do |match|
+        # include file into define block
+        match = "\n  'views/#{underscore_name}/#{@action_name}_view'" + match
+        # add class variable
+        match.gsub!(') ->', '') << ", #{camelize_name}#{Thor::Util.camel_case(@action_name)}View) ->"
+      end
+      File.open(path, 'wb') { |file| file.write(content) }
+
     end
 
     def create_router_entry
       path = "#{output_path}/coffee/routes.coffee"
       if !@action_name || @action_name == 'index'
-        append_to_file(path, "\n    match '#{minus_name}/index', '#{camelize_name}#index'")
+        append_to_file(path, "\n\n    # #{camelize_name}\n    match '#{minus_name}/index', '#{camelize_name}#index'")
       else
         insert_into_file(path, "\n    match '#{minus_name}/#{@action_name}', '#{camelize_name}##{@action_name}'", :after => "    match '#{minus_name}/index', '#{camelize_name}#index'" )
       end
@@ -100,30 +117,35 @@ class CG < Thor
     generate_chaplin_model
   end
 
-  desc 'view Name', "Create a Chaplin View"
-  def view(name)
+  desc 'view CONTROLLER_NAME ACTION', "Create a Chaplin View"
+  def view(name, action_name = 'index')
     @name = name
+    @action_name = action_name
     generate_chaplin_view
   end
 
-  desc 'hbs_template Name', "Create a Chaplin Template"
-  def hbs_template(name)
+  desc 'hbs_template CONTROLLER_NAME, ACTION', "Create a Chaplin Template"
+  def hbs_template(name, action_name = 'index')
     @name = name
     generate_chaplin_template
   end
 
-  desc 'scaffold Name', "Generate Chaplin Scaffold - Controller, Model, View, Template"
+  desc 'scaffold NAME', "Generate Chaplin Scaffold - Controller, Model, View (index), Template (index)"
   def scaffold(name)
     @name = name
+    @action_name = 'index'
     %w{controller model view template}.each { |which| send("generate_chaplin_#{which}") }
     create_router_entry
+    add_view_definition_to_controller
   end
 
-  desc 'scaffold_controller Name', "Generate Chaplin Scaffold Controller - Controller, View, Template"
-  def scaffold_controller(name)
+  desc 'scaffold_controller NAME ACTION', "Generate Chaplin Scaffold Controller - Controller, View, Template"
+  def scaffold_controller(name, action_name = 'index')
     @name = name
+    @action_name = action_name
     %w{controller view template}.each { |which| send("generate_chaplin_#{which}") }
     create_router_entry
+    add_view_definition_to_controller
   end
 
   private
