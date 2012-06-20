@@ -51,9 +51,7 @@ class CG < Thor
     def generate_chaplin_controller
       destination = "#{output_path}coffee/controllers/#{underscore_name}.coffee"
       if File.exists?(destination) && @action_name != 'index'
-        File.open(destination, 'a') do |file|
-          file.puts "\n\n    #{@action_name}: (params) ->"
-        end
+        append_to_file(destination, "\n\n    #{@action_name}: (params) ->")
       else
         template('chaplin_controller.coffee.erb', "#{output_path}coffee/controllers/#{underscore_name}.coffee")
       end
@@ -74,7 +72,12 @@ class CG < Thor
     end
 
     def create_router_entry
-      insert_into_file("#{output_path}/coffee/routes.coffee", "\n    match '#{minus_name}/index',   '#{camelize_name}#index'", :after => "  (match) ->")
+      path = "#{output_path}/coffee/routes.coffee"
+      if !@action_name || @action_name == 'index'
+        append_to_file(path, "\n    match '#{minus_name}/index', '#{camelize_name}#index'")
+      else
+        insert_into_file(path, "\n    match '#{minus_name}/#{@action_name}', '#{camelize_name}##{@action_name}'", :after => "    match '#{minus_name}/index', '#{camelize_name}#index'" )
+      end
     end
   end
 
@@ -88,6 +91,7 @@ class CG < Thor
     @name = name
     @action_name = action_name
     generate_chaplin_controller
+    create_router_entry
   end
 
   desc 'model Name', "Create a Chaplin Model"
