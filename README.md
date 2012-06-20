@@ -9,10 +9,6 @@ The current configuration works with the following application scaffold. The gen
 
 ```
 $ mkdir project && cd project
-
-$ git clone https://github.com/chaplinjs/chaplin-boilerplate.git
-$ mv chaplin-boilerplate src
-
 $ git clone https://github.com/pabera/chaplin-generators.git
 $ cd chaplin-generators/bin
 ```
