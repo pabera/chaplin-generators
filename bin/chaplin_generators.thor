@@ -88,6 +88,7 @@ class CG < Thor
 
     end
 
+    # TODO: When there is not index route, it is not possible to add other routes at the moment!
     def create_router_entry
       path = "#{output_path}/coffee/routes.coffee"
       if !@action_name || @action_name == 'index'
@@ -104,11 +105,12 @@ class CG < Thor
   end
 
   desc 'controller NAME ACTION', "Create a Chaplin Controller"
+  method_options :skip_routing => :boolean
   def controller(name, action_name = 'index')
     @name = name
     @action_name = action_name
     generate_chaplin_controller
-    create_router_entry
+    create_router_entry unless options.skip_routing
   end
 
   desc 'model Name', "Create a Chaplin Model"
@@ -131,20 +133,22 @@ class CG < Thor
   end
 
   desc 'scaffold NAME', "Generate Chaplin Scaffold - Controller, Model, View (index), Template (index)"
+  method_options :skip_routing => :boolean
   def scaffold(name)
     @name = name
     @action_name = 'index'
     %w{controller model view template}.each { |which| send("generate_chaplin_#{which}") }
-    create_router_entry
+    create_router_entry unless options.skip_routing
     add_view_definition_to_controller
   end
 
   desc 'scaffold_controller NAME ACTION', "Generate Chaplin Scaffold Controller - Controller, View, Template"
+  method_options :skip_routing => :boolean
   def scaffold_controller(name, action_name = 'index')
     @name = name
     @action_name = action_name
     %w{controller view template}.each { |which| send("generate_chaplin_#{which}") }
-    create_router_entry
+    create_router_entry unless options.skip_routing
     add_view_definition_to_controller
   end
 

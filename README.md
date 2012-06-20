@@ -26,14 +26,17 @@ A scaffold creates a Controller, Model, View (.coffee) and a template (.hbs - Ha
 ### Controllers
 Creates a new single controller (*.coffee)
 
-`thor cg:controller NAME`
+`thor cg:controller NAME (--skip_routing)`
 
 Create a new controller action
 
-`thor cg:controller NAME ACTION`
+`thor cg:controller NAME ACTION (--skip_routing)`
 
-`thor cg:scaffold_controller NAME ACTION`
+`thor cg:scaffold_controller NAME ACTION (--skip_routing)`
+
 This task creates a Controller, a View (.coffee) and a template (.hbs - Handlebars-Template) and if the controller already exists, it adds the important information to it.
+
+`skip_routing` prevents the generator from inserting a new route to the router
 
 ### Models
 Creates a single model (*.coffee)
