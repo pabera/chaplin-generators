@@ -4,13 +4,13 @@ define [
   ], (View, template) ->
    'use strict'
 
-   class <%= camelize_name %>IndexView extends View
+   class <%= camelize_name %><%= Thor::Util.camel_case(@action_name) %>View extends View
 
     template: template
     template = null
-    id: '<%= plural_underscore_name %>_view'
+    id: '<%= plural_underscore_name %>_<%= @action_name %>_view'
     container: ''
     autoRender: true
 
     initialize: ->
-     super
+      super
