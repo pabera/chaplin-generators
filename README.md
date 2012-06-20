@@ -58,11 +58,11 @@ Creates a single Handlebars Template (*.hbs)
 $ thor list
 cg
 --
-thor cg:app                       # basic app creation, clones Chaplin Boilerplate from Github
-thor cg:controller NAME ACTION    # Create a Chaplin Controller
-thor cg:hbs_template Name         # Create a Chaplin Template
-thor cg:model Name                # Create a Chaplin Model
-thor cg:scaffold Name             # Generate Chaplin Scaffold - Controller, Model, View, Template
-thor cg:scaffold_controller Name  # Generate Chaplin Scaffold Controller - Controller, View, Template
-thor cg:view Name                 # Create a Chaplin View
+thor cg:app                                   # basic app creation, clones Chaplin Boilerplate from Github
+thor cg:controller NAME ACTION                # Create a Chaplin Controller
+thor cg:hbs_template CONTROLLER_NAME, ACTION  # Create a Chaplin Template
+thor cg:model Name                            # Create a Chaplin Model
+thor cg:scaffold NAME                         # Generate Chaplin Scaffold - Controller, Model, View (index), Template (index)
+thor cg:scaffold_controller NAME ACTION       # Generate Chaplin Scaffold Controller - Controller, View, Template
+thor cg:view CONTROLLER_NAME ACTION           # Create a Chaplin View
 ```

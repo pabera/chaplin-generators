@@ -74,7 +74,7 @@ class CG < Thor
     end
 
     def add_view_definition_to_controller
-      path = "#{output_path}coffee/controllers/#{underscore_name}.coffee"
+      path = "#{output_path}coffee/controllers/#{underscore_name}_controller.coffee"
       @action_name == 'index' if !@action_name
 
       content = File.binread(path)
