@@ -11,8 +11,12 @@ class CG < Thor
 
   no_tasks do
 
-    def output_path
+    def src_path
       "../../src/"
+    end
+
+    def test_path
+      "../../test/"
     end
 
     def underscore_name
@@ -45,36 +49,40 @@ class CG < Thor
 
     def generate_chaplin_app
       run("git clone https://github.com/chaplinjs/chaplin-boilerplate.git")
-      run("mv chaplin-boilerplate #{output_path}")
+      run("mv chaplin-boilerplate #{src_path}")
+    end
+
+    def generate_chaplin_app_tests
+      run("mkdir #{test_path}")
     end
 
     def generate_chaplin_controller
-      path = "#{output_path}coffee/controllers/#{underscore_name}_controller.coffee"
+      path = "#{src_path}coffee/controllers/#{underscore_name}_controller.coffee"
 
       if !File.exists?(path)
-        template('chaplin_controller.coffee.erb', path)
+        template('src/chaplin_controller.coffee.erb', path)
       end
 
       @action_name == 'index' if !@action_name
       append_to_file(path, "\n\n    #{@action_name}: (params) ->\n      # @view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
       
-      #template('chaplin_controller_spec.coffee.erb', "#{self.output_path}test/controllers/#{underscore_name}_spec.coffee")
+      #template('src/chaplin_controller_spec.coffee.erb', "#{self.src_path}test/controllers/#{underscore_name}_spec.coffee")
     end
 
     def generate_chaplin_model
-      template('chaplin_model.coffee.erb', "#{output_path}coffee/models/#{underscore_name}.coffee")
+      template('src/chaplin_model.coffee.erb', "#{src_path}coffee/models/#{underscore_name}.coffee")
     end
 
     def generate_chaplin_view
-      template('chaplin_view.coffee.erb', "#{output_path}coffee/views/#{underscore_name}/#{@action_name}_view.coffee")
+      template('src/chaplin_view.coffee.erb', "#{src_path}coffee/views/#{underscore_name}/#{@action_name}_view.coffee")
     end
 
     def generate_chaplin_template
-      template('chaplin_template_index.hbs.erb', "#{output_path}js/templates/#{underscore_name}/#{@action_name}.hbs")
+      template('src/chaplin_template_index.hbs.erb', "#{src_path}js/templates/#{underscore_name}/#{@action_name}.hbs")
     end
 
     def add_view_definition_to_controller
-      path = "#{output_path}coffee/controllers/#{underscore_name}_controller.coffee"
+      path = "#{src_path}coffee/controllers/#{underscore_name}_controller.coffee"
       @action_name == 'index' if !@action_name
 
       content = File.binread(path)
@@ -90,7 +98,7 @@ class CG < Thor
 
     # TODO: When there is not index route, it is not possible to add other routes at the moment!
     def create_router_entry
-      path = "#{output_path}/coffee/routes.coffee"
+      path = "#{src_path}/coffee/routes.coffee"
       if !@action_name || @action_name == 'index'
         append_to_file(path, "\n\n    # #{camelize_name}\n    match '#{minus_name}/index', '#{camelize_name}#index'")
       else
@@ -100,8 +108,10 @@ class CG < Thor
   end
 
   desc 'app', 'basic app creation, clones Chaplin Boilerplate from Github'
+  method_options :skip_tests => :boolean
   def app
     generate_chaplin_app
+    generate_chaplin_app_tests unless options.skip_tests
   end
 
   desc 'controller NAME ACTION', "Create a Chaplin Controller"
