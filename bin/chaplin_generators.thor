@@ -49,8 +49,19 @@ class CG < Thor
 
     def generate_chaplin_app
       if !File.exists?(src_path)
-        run("git clone https://github.com/chaplinjs/chaplin-boilerplate.git")
+        run("git clone https://github.com/pabera/chaplin-boilerplate.git")
         run("mv chaplin-boilerplate #{src_path}")
+
+        path = "#{src_path}coffee/hello_world_application.coffee"
+ 
+        content = File.binread(path)
+        content.gsub!(/HelloWorldApplication/, "#{camelize_name}Application") # add new application file as class
+        content.gsub!(/Chaplin Example Application/, "#{camelize_name}Application")
+        File.open(path, 'wb') { |file| file.write(content) }
+ 
+        run("mv #{path} #{src_path}coffee/#{underscore_name}_application.coffee") # rename application file
+
+        say "Please note that several 'Hello World' files have been kept in various folders, feel free to remove them."
       else
         say "Application directory already exists!"
       end
@@ -58,7 +69,20 @@ class CG < Thor
 
     def generate_chaplin_app_tests
       if !File.exists?(test_path)
-        run("mkdir #{test_path}")
+        run("git clone https://github.com/pabera/chaplin-mocha.git")
+        run("mv chaplin-mocha/test #{test_path}")
+        remove_file("#{test_path}coffee/hello_world_application_spec.coffee") # delete hello_world from cloned repo
+        run("rm -rf chaplin-mocha")
+
+        # Update config.js file
+        path = "#{test_path}config.js"
+        content = File.binread(path)
+        content.gsub!(/hello_world/, "#{underscore_name}")
+        File.open(path, 'wb') { |file| file.write(content) }
+
+        template("test/application_spec.coffee.erb", "#{test_path}coffee/#{underscore_name}_application_spec.coffee")
+      else
+        say "Test directory already exists!"
       end
     end
 
@@ -71,16 +95,45 @@ class CG < Thor
 
       @action_name == 'index' if !@action_name
       append_to_file(path, "\n\n    #{@action_name}: (params) ->\n      # @view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
-      
-      #template('src/chaplin_controller_spec.coffee.erb', "#{self.src_path}test/controllers/#{underscore_name}_spec.coffee")
+    end
+
+    def generate_chaplin_controller_tests
+      @type = "controller"
+      if test_environment!
+        path = "#{test_path}coffee/controllers/#{underscore_name}_controller_spec.coffee"
+        template("test/controller_spec.coffee.erb", path)
+        create_test_entry
+      else
+        say "Skipped tests"
+      end
     end
 
     def generate_chaplin_model
       template('src/chaplin_model.coffee.erb', "#{src_path}coffee/models/#{underscore_name}.coffee")
     end
 
+    def generate_chaplin_model_tests
+      @type = "model"
+      if test_environment!
+        template('test/model_spec.coffee.erb', "#{test_path}coffee/models/#{underscore_name}_model_spec.coffee")
+        create_test_entry
+      else
+        say "Skipped tests"
+      end
+    end
+
     def generate_chaplin_view
-      template('src/chaplin_view.coffee.erb', "#{src_path}coffee/views/#{underscore_name}/#{@action_name}_view.coffee")
+      template('src/chaplin_view.coffee.erb', "#{src_path}coffee/views/#{underscore_name}_view.coffee")
+    end
+
+    def generate_chaplin_view_tests
+      @type = "view"
+      if test_environment!
+        template('test/view_spec.coffee.erb', "#{test_path}coffee/views/#{underscore_name}_view_spec.coffee")
+        create_test_entry
+      else
+        say "Skipped tests"
+      end
     end
 
     def generate_chaplin_template
@@ -111,31 +164,51 @@ class CG < Thor
         insert_into_file(path, "\n    match '#{minus_name}/#{@action_name}', '#{camelize_name}##{@action_name}'", :after => "    match '#{minus_name}', '#{camelize_name}#index'" )
       end
     end
+
+    def create_test_entry
+      path = "#{test_path}config.js"
+
+      content = File.binread(path)
+      content.gsub!(/$\n.*\],.*\n*.*\n*.*mocha.run\(\)$/) do |match|
+        # include file into define block
+        match = ",\n    '../../test/js/#{@type}s/#{underscore_name}_#{@type}_spec'" + match
+      end
+      File.open(path, 'wb') { |file| file.write(content) }
+    end
+
+    def test_environment!
+      File.exists?("#{test_path}")
+    end
   end
 
-  desc 'app', 'basic app creation, clones Chaplin Boilerplate from Github'
+  desc 'app NAME', 'basic app creation, clones Chaplin Boilerplate from Github'
   method_options :skip_tests => :boolean
-  def app
+  def app(name)
+    @name = name
     generate_chaplin_app
     generate_chaplin_app_tests unless options.skip_tests
   end
 
   desc 'controller NAME ACTION', "Create a Chaplin Controller"
-  method_options :skip_routing => :boolean
+  method_options :skip_routing => :boolean, :skip_tests => :boolean
   def controller(name, action_name = 'index')
     @name = name
     @action_name = action_name
     generate_chaplin_controller
+    generate_chaplin_controller_tests unless options.skip_tests
     create_router_entry unless options.skip_routing
   end
 
   desc 'model Name', "Create a Chaplin Model"
+  method_options :skip_tests => :boolean
   def model(name)
     @name = name
     generate_chaplin_model
+    generate_chaplin_model_tests unless options.skip_tests
   end
 
   desc 'view CONTROLLER_NAME ACTION', "Create a Chaplin View"
+  method_options :skip_tests => :boolean
   def view(name, action_name = 'index')
     @name = name
     @action_name = action_name
@@ -149,11 +222,12 @@ class CG < Thor
   end
 
   desc 'scaffold NAME', "Generate Chaplin Scaffold - Controller, Model, View (index), Template (index)"
-  method_options :skip_routing => :boolean
+  method_options :skip_routing => :boolean, :skip_tests => :boolean
   def scaffold(name)
     @name = name
     @action_name = 'index'
     %w{controller model view template}.each { |which| send("generate_chaplin_#{which}") }
+    %w{controller model view}.each { |which| send("generate_chaplin_#{which}_tests") } unless options.skip_tests
     create_router_entry unless options.skip_routing
     add_view_definition_to_controller
   end
@@ -164,6 +238,8 @@ class CG < Thor
     @name = name
     @action_name = action_name
     %w{controller view template}.each { |which| send("generate_chaplin_#{which}") }
+    %w{controller view}.each { |which| send("generate_chaplin_#{which}_tests") } unless options.skip_tests
+    
     create_router_entry unless options.skip_routing
     add_view_definition_to_controller
   end

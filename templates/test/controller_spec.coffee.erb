@@ -1,0 +1,17 @@
+# Spec for <%= camelize_name %>Controller
+
+define [
+  'chaplin'
+  'controllers/<%= underscore_name %>_controller'
+], (Chaplin, <%= camelize_name %>Controller) ->
+  'use strict'
+
+  describe 'Controllers/<%= camelize_name %>Controller', ->
+
+    describe '@initialize', ->
+
+      beforeEach ->
+        @<%= camelize_name %>Controller = new <%= camelize_name %>Controller()
+
+      it 'should have a initialize function', ->
+        expect(@<%= camelize_name %>Controller.initialize).to.be.a('function')

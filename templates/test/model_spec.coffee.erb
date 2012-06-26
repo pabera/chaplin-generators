@@ -1,0 +1,12 @@
+# Spec for <%= camelize_name %>Model
+
+define [
+  'chaplin'
+  'models/<%= underscore_name %>_model'
+], (Chaplin, <%= camelize_name %>Model) ->
+  'use strict'
+
+  describe 'Models/<%= camelize_name %>Model', ->
+
+    beforeEach ->
+      @<%= camelize_name %>Model = new <%= camelize_name %>Model()
