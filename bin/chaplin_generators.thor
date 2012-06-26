@@ -154,6 +154,7 @@ class CG < Thor
 
         if !File.exists?(path)
           template('test/view_spec.coffee.erb', path)
+          create_test_entry
         end
 
         # Add default action tests to existing Spec File
@@ -176,7 +177,6 @@ class CG < Thor
         # add require to decline
         add_view_definition path, @action_name
 
-        create_test_entry
       else
         say "Skipped tests"
       end
