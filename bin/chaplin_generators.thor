@@ -169,13 +169,8 @@ class CG < Thor
 
     describe '@initialize', ->
 
-      it 'should have a initialize function', ->
-        expect(@#{camelize_name}View.initialize).to.be.a('function')
-
-      it 'should be called on startup', ->
-        spy = sinon.spy(#{camelize_name}#{Thor::Util.camel_case(@action_name)}View.__proto__, 'initialize')
-        #{camelize_name}View.initialize()
-        expect(spy.calledOnce).to.be.true")
+      it 'should be defined', ->
+        expect(@#{camelize_name}#{Thor::Util.camel_case(@action_name)}View.initialize()).to.be.an('object')")
 
         # add require to decline
         add_view_definition path, @action_name

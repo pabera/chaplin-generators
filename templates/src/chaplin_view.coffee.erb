@@ -1,10 +1,10 @@
 define [
   'views/base/view'
   'text!templates/<%= underscore_name %>/<%= @action_name %>.hbs'
-  ], (View, template) ->
-   'use strict'
+], (View, template) ->
+  'use strict'
 
-   class <%= camelize_name %><%= Thor::Util.camel_case(@action_name) %>View extends View
+  class <%= camelize_name %><%= Thor::Util.camel_case(@action_name) %>View extends View
 
     template: template
     template = null
