@@ -48,12 +48,18 @@ class CG < Thor
     end
 
     def generate_chaplin_app
-      run("git clone https://github.com/chaplinjs/chaplin-boilerplate.git")
-      run("mv chaplin-boilerplate #{src_path}")
+      if !File.exists?(src_path)
+        run("git clone https://github.com/chaplinjs/chaplin-boilerplate.git")
+        run("mv chaplin-boilerplate #{src_path}")
+      else
+        say "Application directory already exists!"
+      end
     end
 
     def generate_chaplin_app_tests
-      run("mkdir #{test_path}")
+      if !File.exists?(test_path)
+        run("mkdir #{test_path}")
+      end
     end
 
     def generate_chaplin_controller
