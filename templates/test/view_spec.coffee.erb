@@ -2,11 +2,11 @@
 
 define [
   'chaplin'
-  'models/<%= underscore_name %>_view'
+  'views/<%= underscore_name %>/<%= @action_name %>_view'
 ], (Chaplin, <%= camelize_name %>View) ->
   'use strict'
 
-  describe 'Views/<%= camelize_name %>View', ->
+  describe 'Views/<%= camelize_name %>/<%= @action_name %>View', ->
 
     beforeEach ->
       @<%= camelize_name %>View = new <%= camelize_name %>View()
