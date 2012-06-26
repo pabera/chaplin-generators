@@ -199,9 +199,9 @@ class CG < Thor
     def create_router_entry
       path = "#{src_path}/coffee/routes.coffee"
       if !@action_name || @action_name == 'index'
-        append_to_file(path, "\n\n    # #{camelize_name}\n    match '#{minus_name}/index', '#{camelize_name}#index'")
+        append_to_file(path, "\n\n    # #{camelize_name}\n    match '#{pluralize(minus_name)}', '#{camelize_name}#index'")
       else
-        insert_into_file(path, "\n    match '#{minus_name}/#{@action_name}', '#{camelize_name}##{@action_name}'", :after => "    match '#{minus_name}', '#{camelize_name}#index'" )
+        insert_into_file(path, "\n    match '#{pluralize(minus_name)}/#{@action_name}', '#{camelize_name}##{@action_name}'", :after => "    match '#{pluralize(minus_name)}', '#{camelize_name}#index'" )
       end
     end
 
