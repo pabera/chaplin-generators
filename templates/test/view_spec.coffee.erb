@@ -16,7 +16,7 @@ define [
       it 'should have a initialize function', ->
         expect(@<%= camelize_name %>View.initialize).to.be.a('function')
 
-      it 'should be called on startup'
+      it 'should be called on startup', ->
         spy = sinon.spy(@<%= camelize_name %>View.__proto__, 'initialize')
         @<%= camelize_name %>View.initialize()
         expect(spy.calledOnce).to.be.true
