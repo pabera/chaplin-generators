@@ -102,6 +102,7 @@ class CG < Thor
       if test_environment!
         path = "#{test_path}coffee/controllers/#{underscore_name}_controller_spec.coffee"
         template("test/controller_spec.coffee.erb", path)
+        # Todo: new actions should not create new testfiles!
         create_test_entry
       else
         say "Skipped tests"
@@ -123,13 +124,14 @@ class CG < Thor
     end
 
     def generate_chaplin_view
-      template('src/chaplin_view.coffee.erb', "#{src_path}coffee/views/#{underscore_name}_view.coffee")
+      template('src/chaplin_view.coffee.erb', "#{src_path}coffee/views/#{underscore_name}/#{@action_name}_view.coffee")
     end
 
     def generate_chaplin_view_tests
       @type = "view"
       if test_environment!
         template('test/view_spec.coffee.erb', "#{test_path}coffee/views/#{underscore_name}_view_spec.coffee")
+        # Todo: new actions should not create new testfiles!
         create_test_entry
       else
         say "Skipped tests"
