@@ -125,7 +125,11 @@ class CG < Thor
     end
 
     def generate_chaplin_model
-      template('src/chaplin_model.coffee.erb', "#{src_path}coffee/models/#{underscore_name}.coffee")
+      path = "#{src_path}coffee/models/#{underscore_name}.coffee"
+
+      if !File.exists?(path)
+        template('src/chaplin_model.coffee.erb', path)
+      end
     end
 
     def generate_chaplin_model_tests
@@ -143,7 +147,6 @@ class CG < Thor
 
       if !File.exists?(path)
         template('src/chaplin_view.coffee.erb', path)
-        create_test_entry
       end
     end
 
