@@ -94,16 +94,31 @@ class CG < Thor
       end
 
       @action_name == 'index' if !@action_name
-      append_to_file(path, "\n\n    #{@action_name}: (params) ->\n      # @view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
+      append_to_file(path, "\n\n    # #{@action_name}: (params) ->\n    #   @view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
     end
 
     def generate_chaplin_controller_tests
       @type = "controller"
       if test_environment!
         path = "#{test_path}coffee/controllers/#{underscore_name}_controller_spec.coffee"
-        template("test/controller_spec.coffee.erb", path)
-        # Todo: new actions should not create new testfiles!
-        create_test_entry
+
+        if !File.exists?(path)
+          template("test/controller_spec.coffee.erb", path)
+          create_test_entry
+        end
+
+        # Add default action tests to existing Spec File
+        @action_name == 'index' if !@action_name
+        append_to_file(path, "\n\n    describe '@#{@action_name}', ->
+
+      it 'should have a #{@action_name} function', ->
+        expect(#{camelize_name}Controller.#{@action_name}).to.be.a('function')
+
+      it 'should be called on startup', ->
+        spy = sinon.spy(#{camelize_name}Controller.__proto__, '#{@action_name}')
+        #{camelize_name}Controller.#{@action_name}()
+        expect(spy.calledOnce).to.be.true")
+
       else
         say "Skipped tests"
       end
@@ -124,14 +139,43 @@ class CG < Thor
     end
 
     def generate_chaplin_view
-      template('src/chaplin_view.coffee.erb', "#{src_path}coffee/views/#{underscore_name}/#{@action_name}_view.coffee")
+      path = "#{src_path}coffee/views/#{underscore_name}/#{@action_name}_view.coffee"
+
+      if !File.exists?(path)
+        template('src/chaplin_view.coffee.erb', path)
+        create_test_entry
+      end
     end
 
     def generate_chaplin_view_tests
       @type = "view"
       if test_environment!
-        template('test/view_spec.coffee.erb', "#{test_path}coffee/views/#{underscore_name}_view_spec.coffee")
-        # Todo: new actions should not create new testfiles!
+        path = "#{test_path}coffee/views/#{underscore_name}_view_spec.coffee"
+
+        if !File.exists?(path)
+          template('test/view_spec.coffee.erb', path)
+        end
+
+        # Add default action tests to existing Spec File
+        @action_name == 'index' if !@action_name
+        append_to_file(path, "\n\n  describe 'Views/#{camelize_name}/#{Thor::Util.camel_case(@action_name)}View', ->
+
+    beforeEach ->
+      #{camelize_name}#{Thor::Util.camel_case(@action_name)}View = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()
+
+    describe '@initialize', ->
+
+      it 'should have a initialize function', ->
+        expect(@#{camelize_name}View.initialize).to.be.a('function')
+
+      it 'should be called on startup', ->
+        spy = sinon.spy(#{camelize_name}#{Thor::Util.camel_case(@action_name)}View.__proto__, 'initialize')
+        #{camelize_name}View.initialize()
+        expect(spy.calledOnce).to.be.true")
+
+        # add require to decline
+        add_view_definition path, @action_name
+
         create_test_entry
       else
         say "Skipped tests"
@@ -142,19 +186,15 @@ class CG < Thor
       template('src/chaplin_template_index.hbs.erb', "#{src_path}js/templates/#{underscore_name}/#{@action_name}.hbs")
     end
 
-    def add_view_definition_to_controller
-      path = "#{src_path}coffee/controllers/#{underscore_name}_controller.coffee"
-      @action_name == 'index' if !@action_name
-
+    def add_view_definition(path, action_name)
       content = File.binread(path)
       content.gsub!(/$\n^\],.*\(.*\).*->$/) do |match|
         # include file into define block
-        match = "\n  'views/#{underscore_name}/#{@action_name}_view'" + match
+        match = "\n  'views/#{underscore_name}/#{action_name}_view'" + match
         # add class variable
-        match.gsub!(') ->', '') << ", #{camelize_name}#{Thor::Util.camel_case(@action_name)}View) ->"
+        match.gsub!(') ->', '') << ", #{camelize_name}#{Thor::Util.camel_case(action_name)}View) ->"
       end
       File.open(path, 'wb') { |file| file.write(content) }
-
     end
 
     # TODO: When there is not index route, it is not possible to add other routes at the moment!
@@ -215,6 +255,7 @@ class CG < Thor
     @name = name
     @action_name = action_name
     generate_chaplin_view
+    generate_chaplin_view_tests unless options.skip_tests
   end
 
   desc 'hbs_template CONTROLLER_NAME, ACTION', "Create a Chaplin Template"
@@ -231,11 +272,14 @@ class CG < Thor
     %w{controller model view template}.each { |which| send("generate_chaplin_#{which}") }
     %w{controller model view}.each { |which| send("generate_chaplin_#{which}_tests") } unless options.skip_tests
     create_router_entry unless options.skip_routing
-    add_view_definition_to_controller
+
+    path = "#{src_path}coffee/controllers/#{underscore_name}_controller.coffee"
+    @action_name == 'index' if !@action_name
+    add_view_definition path, @action_name
   end
 
   desc 'scaffold_controller NAME ACTION', "Generate Chaplin Scaffold Controller - Controller, View, Template"
-  method_options :skip_routing => :boolean
+  method_options :skip_routing => :boolean, :skip_tests => :boolean
   def scaffold_controller(name, action_name = 'index')
     @name = name
     @action_name = action_name
@@ -243,7 +287,10 @@ class CG < Thor
     %w{controller view}.each { |which| send("generate_chaplin_#{which}_tests") } unless options.skip_tests
     
     create_router_entry unless options.skip_routing
-    add_view_definition_to_controller
+
+    path = "#{src_path}coffee/controllers/#{underscore_name}_controller.coffee"
+    @action_name == 'index' if !@action_name
+    add_view_definition path, @action_name
   end
 
   private

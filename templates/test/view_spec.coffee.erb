@@ -2,21 +2,5 @@
 
 define [
   'chaplin'
-  'views/<%= underscore_name %>/<%= @action_name %>_view'
-], (Chaplin, <%= camelize_name %>View) ->
+], (Chaplin) ->
   'use strict'
-
-  describe 'Views/<%= camelize_name %>/<%= @action_name %>View', ->
-
-    beforeEach ->
-      @<%= camelize_name %>View = new <%= camelize_name %>View()
-
-    describe '@initialize', ->
-
-      it 'should have a initialize function', ->
-        expect(@<%= camelize_name %>View.initialize).to.be.a('function')
-
-      it 'should be called on startup', ->
-        spy = sinon.spy(@<%= camelize_name %>View.__proto__, 'initialize')
-        @<%= camelize_name %>View.initialize()
-        expect(spy.calledOnce).to.be.true
