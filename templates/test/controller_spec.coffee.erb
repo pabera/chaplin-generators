@@ -8,10 +8,10 @@ define [
 
   describe 'Controllers/<%= camelize_name %>Controller', ->
 
-    describe '@initialize', ->
-
-      beforeEach ->
+     beforeEach ->
         @<%= camelize_name %>Controller = new <%= camelize_name %>Controller()
+
+    describe '@initialize', ->
 
       it 'should have a initialize function', ->
         expect(@<%= camelize_name %>Controller.initialize).to.be.a('function')
