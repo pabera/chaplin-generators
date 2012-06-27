@@ -31,10 +31,10 @@ Creates a TestApplication
 ### Scaffolds
 A scaffold creates a Controller, Model, View (.coffee) and a template (.hbs - Handlebars-Template)
 
-`thor cg:scaffold NAME`
+`thor cg:scaffold NAME (--skip_tests)`
 
 ```
-$ thor cg:scaffold foo (--skip_tests)
+$ thor cg:scaffold foo
 
 Creates: 
 
