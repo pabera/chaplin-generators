@@ -93,7 +93,13 @@ class CG < Thor
         template('src/chaplin_controller.coffee.erb', path)
       end
 
-      @action_name == 'index' if !@action_name
+      view_name = 'view' 
+      if !@action_name
+        @action_name == 'index'
+      else
+        view_name = "#{@action_name}_view"
+      end
+
       append_to_file(path, "\n\n    # #{@action_name}: (params) ->\n    #   @view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
     end
 
