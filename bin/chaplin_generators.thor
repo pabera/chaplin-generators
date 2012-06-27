@@ -112,11 +112,11 @@ class CG < Thor
         append_to_file(path, "\n\n    describe '@#{@action_name}', ->
 
       it 'should have a #{@action_name} function', ->
-        expect(#{camelize_name}Controller.#{@action_name}).to.be.a('function')
+        expect(@#{camelize_name}Controller.#{@action_name}).to.be.a('function')
 
       it 'should be called on startup', ->
-        spy = sinon.spy(#{camelize_name}Controller.__proto__, '#{@action_name}')
-        #{camelize_name}Controller.#{@action_name}()
+        spy = sinon.spy(@#{camelize_name}Controller.__proto__, '#{@action_name}')
+        @#{camelize_name}Controller.#{@action_name}()
         expect(spy.calledOnce).to.be.true")
 
       else
@@ -165,7 +165,7 @@ class CG < Thor
         append_to_file(path, "\n\n  describe 'Views/#{camelize_name}/#{Thor::Util.camel_case(@action_name)}View', ->
 
     beforeEach ->
-      #{camelize_name}#{Thor::Util.camel_case(@action_name)}View = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()
+      @#{camelize_name}#{Thor::Util.camel_case(@action_name)}View = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()
 
     describe '@initialize', ->
 
