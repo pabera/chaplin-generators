@@ -100,7 +100,7 @@ class CG < Thor
         view_name = "#{@action_name}_view"
       end
 
-      append_to_file(path, "\n\n    # #{@action_name}: (params) ->\n    #   @view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
+      append_to_file(path, "\n\n    # #{@action_name}: (params) ->\n    #   @{@action_name}_view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
     end
 
     def generate_chaplin_controller_tests
@@ -164,8 +164,6 @@ class CG < Thor
         # Add default action tests to existing Spec File
         @action_name == 'index' if !@action_name
         append_to_file(path, "\n\n  describe 'Views/#{camelize_name}/#{Thor::Util.camel_case(@action_name)}View', ->
-
-
 
     beforeEach ->
       @#{camelize_name}#{Thor::Util.camel_case(@action_name)}View = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()
