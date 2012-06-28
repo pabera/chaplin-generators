@@ -118,12 +118,7 @@ class CG < Thor
         append_to_file(path, "\n\n    describe '@#{@action_name}', ->
 
       it 'should have a #{@action_name} function', ->
-        expect(@#{camelize_name}Controller.#{@action_name}).to.be.a('function')
-
-      it 'should be called on startup', ->
-        spy = sinon.spy(@#{camelize_name}Controller.__proto__, '#{@action_name}')
-        @#{camelize_name}Controller.#{@action_name}()
-        expect(spy.calledOnce).to.be.true")
+        expect(@#{camelize_name}Controller.#{@action_name}).to.be.a('function')")
 
       else
         say "Skipped tests"
@@ -170,8 +165,14 @@ class CG < Thor
         @action_name == 'index' if !@action_name
         append_to_file(path, "\n\n  describe 'Views/#{camelize_name}/#{Thor::Util.camel_case(@action_name)}View', ->
 
+
+
     beforeEach ->
       @#{camelize_name}#{Thor::Util.camel_case(@action_name)}View = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()
+
+    it 'should have a set container class', ->
+      @#{camelize_name}#{Thor::Util.camel_case(@action_name)}View.container.should.be.a('string')
+      expect(@#{camelize_name}#{Thor::Util.camel_case(@action_name)}View.container).to.not.equal('')
 
     describe '@initialize', ->
 
