@@ -12,11 +12,11 @@ class CG < Thor
   no_tasks do
 
     def src_path
-      "../../src/"
+      "../../src"
     end
 
     def test_path
-      "../../test/"
+      "../../test"
     end
 
     def underscore_name
@@ -52,14 +52,14 @@ class CG < Thor
         run("git clone https://github.com/pabera/chaplin-boilerplate.git")
         run("mv chaplin-boilerplate #{src_path}")
 
-        path = "#{src_path}coffee/hello_world_application.coffee"
+        path = "#{src_path}/coffee/hello_world_application.coffee"
  
         content = File.binread(path)
         content.gsub!(/HelloWorldApplication/, "#{camelize_name}Application") # add new application file as class
         content.gsub!(/Chaplin Example Application/, "#{camelize_name}Application")
         File.open(path, 'wb') { |file| file.write(content) }
  
-        run("mv #{path} #{src_path}coffee/#{underscore_name}_application.coffee") # rename application file
+        run("mv #{path} #{src_path}/coffee/#{underscore_name}_application.coffee") # rename application file
 
         say "Please note that several 'Hello World' files have been kept in various folders, feel free to remove them."
       else
@@ -71,23 +71,23 @@ class CG < Thor
       if !File.exists?(test_path)
         run("git clone https://github.com/pabera/chaplin-mocha.git")
         run("mv chaplin-mocha/test #{test_path}")
-        remove_file("#{test_path}coffee/hello_world_application_spec.coffee") # delete hello_world from cloned repo
+        remove_file("#{test_path}/coffee/hello_world_application_spec.coffee") # delete hello_world from cloned repo
         run("rm -rf chaplin-mocha")
 
         # Update config.js file
-        path = "#{test_path}config.js"
+        path = "#{test_path}/config.js"
         content = File.binread(path)
         content.gsub!(/hello_world/, "#{underscore_name}")
         File.open(path, 'wb') { |file| file.write(content) }
 
-        template("test/application_spec.coffee.erb", "#{test_path}coffee/#{underscore_name}_application_spec.coffee")
+        template("test/application_spec.coffee.erb", "#{test_path}/coffee/#{underscore_name}_application_spec.coffee")
       else
         say "Test directory already exists!"
       end
     end
 
     def generate_chaplin_controller
-      path = "#{src_path}coffee/controllers/#{underscore_name}_controller.coffee"
+      path = "#{src_path}/coffee/controllers/#{underscore_name}_controller.coffee"
 
       if !File.exists?(path)
         template('src/chaplin_controller.coffee.erb', path)
@@ -106,7 +106,7 @@ class CG < Thor
     def generate_chaplin_controller_tests
       @type = "controller"
       if test_environment!
-        path = "#{test_path}coffee/controllers/#{underscore_name}_controller_spec.coffee"
+        path = "#{test_path}/coffee/controllers/#{underscore_name}_controller_spec.coffee"
 
         if !File.exists?(path)
           template("test/controller_spec.coffee.erb", path)
@@ -126,7 +126,7 @@ class CG < Thor
     end
 
     def generate_chaplin_model
-      path = "#{src_path}coffee/models/#{underscore_name}.coffee"
+      path = "#{src_path}/coffee/models/#{underscore_name}.coffee"
 
       if !File.exists?(path)
         template('src/chaplin_model.coffee.erb', path)
@@ -136,7 +136,7 @@ class CG < Thor
     def generate_chaplin_model_tests
       @type = "model"
       if test_environment!
-        template('test/model_spec.coffee.erb', "#{test_path}coffee/models/#{underscore_name}_model_spec.coffee")
+        template('test/model_spec.coffee.erb', "#{test_path}/coffee/models/#{underscore_name}_model_spec.coffee")
         create_test_entry
       else
         say "Skipped tests"
@@ -144,7 +144,7 @@ class CG < Thor
     end
 
     def generate_chaplin_view
-      path = "#{src_path}coffee/views/#{underscore_name}/#{@action_name}_view.coffee"
+      path = "#{src_path}/coffee/views/#{underscore_name}/#{@action_name}_view.coffee"
 
       if !File.exists?(path)
         template('src/chaplin_view.coffee.erb', path)
@@ -154,7 +154,7 @@ class CG < Thor
     def generate_chaplin_view_tests
       @type = "view"
       if test_environment!
-        path = "#{test_path}coffee/views/#{underscore_name}_view_spec.coffee"
+        path = "#{test_path}/coffee/views/#{underscore_name}_view_spec.coffee"
 
         if !File.exists?(path)
           template('test/view_spec.coffee.erb', path)
@@ -186,7 +186,7 @@ class CG < Thor
     end
 
     def generate_chaplin_template
-      template('src/chaplin_template_index.hbs.erb', "#{src_path}js/templates/#{underscore_name}/#{@action_name}.hbs")
+      template('src/chaplin_template_index.hbs.erb', "#{src_path}/js/templates/#{underscore_name}/#{@action_name}.hbs")
     end
 
     def add_view_definition(path, action_name)
@@ -211,7 +211,7 @@ class CG < Thor
     end
 
     def create_test_entry
-      path = "#{test_path}config.js"
+      path = "#{test_path}/config.js"
 
       content = File.binread(path)
       content.gsub!(/$\n.*\],.*\n*.*\n*.*mocha.run\(\)$/) do |match|
@@ -276,7 +276,7 @@ class CG < Thor
     %w{controller model view}.each { |which| send("generate_chaplin_#{which}_tests") } unless options.skip_tests
     create_router_entry unless options.skip_routing
 
-    path = "#{src_path}coffee/controllers/#{underscore_name}_controller.coffee"
+    path = "#{src_path}/coffee/controllers/#{underscore_name}_controller.coffee"
     @action_name == 'index' if !@action_name
     add_view_definition path, @action_name
   end
@@ -291,7 +291,7 @@ class CG < Thor
     
     create_router_entry unless options.skip_routing
 
-    path = "#{src_path}coffee/controllers/#{underscore_name}_controller.coffee"
+    path = "#{src_path}/coffee/controllers/#{underscore_name}_controller.coffee"
     @action_name == 'index' if !@action_name
     add_view_definition path, @action_name
   end
