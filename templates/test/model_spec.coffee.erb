@@ -10,13 +10,3 @@ define [
 
     beforeEach ->
       @<%= camelize_name %>Model = new <%= camelize_name %>Model()
-
-    describe '@initialize', ->
-
-      it 'should have a initialize function', ->
-        expect(@<%= camelize_name %>Model.initialize).to.be.a('function')
-
-      it 'should be called on startup', ->
-        spy = sinon.spy(@<%= camelize_name %>Model.__proto__, 'initialize')
-        @<%= camelize_name %>Model.initialize()
-        expect(spy.calledOnce).to.be.true
