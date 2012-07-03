@@ -101,7 +101,7 @@ class CG < Thor
         view_name = "#{@action_name}_view"
       end
 
-      append_to_file(path, "\n\n    # #{@action_name}: (params) ->\n    #   @{@action_name}_view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
+      append_to_file(path, "\n\n    # #{@action_name}: (params) ->\n    #   @#{@action_name}_view = new #{camelize_name}#{Thor::Util.camel_case(@action_name)}View()")
     end
 
     def generate_chaplin_controller_tests
