@@ -187,7 +187,7 @@ class CG < Thor
     end
 
     def generate_chaplin_template
-      template('src/chaplin_template_index.hbs.erb', "#{src_path}/js/templates/#{underscore_name}/#{@action_name}.hbs")
+      template('src/chaplin_template_index.haml.erb', "#{src_path}/coffee/templates/#{underscore_name}/#{@action_name}.haml")
     end
 
     def add_view_definition(path, action_name)
