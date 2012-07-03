@@ -20,8 +20,8 @@ class CG < Thor
     end
 
     def underscore_name
-      @name.gsub!("_", "-")
-      singularize(Thor::Util.snake_case(@name))
+      name = @name.gsub("-", "_")
+      singularize(Thor::Util.snake_case(name))
     end
 
     def minus_name
