@@ -1,0 +1,10 @@
+path:
+  root: ../../
+  src: src
+  test: test
+boilerplate:
+  name: chaplin-boilerplate
+  git-src: https://github.com/pabera/chaplin-boilerplate.git
+test-framework:
+  name: chaplin-mocha
+  git-src: https://github.com/pabera/chaplin-mocha.git

@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'thor'
 require 'thor/group'
+require 'yaml'
 
 class CG < Thor
   include Thor::Actions
@@ -11,12 +12,16 @@ class CG < Thor
 
   no_tasks do
 
+    def load_config
+      @config = YAML::load_file('../templates/cg_config.yml')      
+    end
+
     def src_path
-      "../../src"
+      @config['path']['root'] + @config['path']['src']
     end
 
     def test_path
-      "../../test"
+      @config['path']['root'] + @config['path']['test']
     end
 
     def underscore_name
@@ -49,9 +54,11 @@ class CG < Thor
     end
 
     def generate_chaplin_app
+      load_config()
+
       if !File.exists?(src_path)
-        run("git clone https://github.com/pabera/chaplin-boilerplate.git")
-        run("mv chaplin-boilerplate #{src_path}")
+        run("git clone #{@config['boilerplate']['git-src']}")
+        run("mv #{@config['boilerplate']['name']} #{src_path}")
 
         path = "#{src_path}/coffee/hello_world_application.coffee"
  
@@ -69,11 +76,13 @@ class CG < Thor
     end
 
     def generate_chaplin_app_tests
+      load_config()
+
       if !File.exists?(test_path)
-        run("git clone https://github.com/pabera/chaplin-mocha.git")
-        run("mv chaplin-mocha/test #{test_path}")
+        run("git clone #{@config['test-framework']['git-src']}")
+        run("mv #{@config['test-framework']['name']}/test #{test_path}")
         remove_file("#{test_path}/coffee/hello_world_application_spec.coffee") # delete hello_world from cloned repo
-        run("rm -rf chaplin-mocha")
+        run("rm -rf #{@config['test-framework']['name']}")
 
         # Update config.js file
         path = "#{test_path}/config.js"
