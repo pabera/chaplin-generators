@@ -13,14 +13,16 @@ class CG < Thor
   no_tasks do
 
     def load_config
-      @config = YAML::load_file('../templates/cg_config.yml')      
+      @config = YAML::load_file('config.yml')
     end
 
     def src_path
+      load_config()
       @config['path']['root'] + @config['path']['src']
     end
 
     def test_path
+      load_config()
       @config['path']['root'] + @config['path']['test']
     end
 
@@ -54,8 +56,6 @@ class CG < Thor
     end
 
     def generate_chaplin_app
-      load_config()
-
       if !File.exists?(src_path)
         run("git clone #{@config['boilerplate']['git-src']}")
         run("mv #{@config['boilerplate']['name']} #{src_path}")
@@ -76,8 +76,6 @@ class CG < Thor
     end
 
     def generate_chaplin_app_tests
-      load_config()
-
       if !File.exists?(test_path)
         run("git clone #{@config['test-framework']['git-src']}")
         run("mv #{@config['test-framework']['name']}/test #{test_path}")
