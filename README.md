@@ -18,6 +18,9 @@ Since this paradigm is all present in Rails it was almost necessary to follow it
 
 *Please note: always provide singular words as identifiers (NAME) since the generator e.g. simply adds an 's' to it several times to indicate plural words.*
 
+### Config
+There is a little configuration file (config.yml) in the `bin` folder. You can configure some paths there when you want to put the generators in a different working directory. All paths are relative.
+
 ### Application
 Clones the Chaplin-Boilerplate from Github and sets up folder structure that works with chaplin-generators
 
